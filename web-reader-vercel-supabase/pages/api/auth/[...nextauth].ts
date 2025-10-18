@@ -9,11 +9,12 @@ export const authOptions = {
       name: 'Email',
       credentials: {
         email: { label: 'Email', type: 'text' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         const email = credentials?.email?.trim();
+        // For development we accept any non-empty email. Password is ignored.
         if (!email) return null;
-        // In production, validate against your user store.
         const user = { id: email, email };
         return user;
       },
