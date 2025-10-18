@@ -1,4 +1,4 @@
-import { supabaseAdmin } from './supabase.ts';
+import { supabaseAdmin } from './supabase';
 
 export type PageMeta = {
   book_id: string;
@@ -16,4 +16,15 @@ export async function insertPageMeta(meta: PageMeta) {
     .from('book_pages')
     .upsert(meta, { onConflict: 'book_id,page_no' });
   if (error) throw error;
+}
+
+export async function getPageMeta(bookId: string, pageNo: number): Promise<PageMeta | null> {
+  const { data, error } = await supabaseAdmin
+    .from('book_pages')
+    .select('*')
+    .eq('book_id', bookId)
+    .eq('page_no', pageNo)
+    .limit(1);
+  if (error) throw error;
+  return (data && data[0]) || null;
 }
