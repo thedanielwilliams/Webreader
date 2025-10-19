@@ -9,6 +9,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!meta) return res.status(404).json({ ok: false, message: 'meta not found', bookId, pageNo });
     res.json({ ok: true, meta, bookId, pageNo });
   } catch (e: any) {
-    res.status(500).json({ ok: false, message: e.message });
+    res.status(500).json({
+      ok: false,
+      message: e?.message || String(e),
+      name: e?.name,
+      cause: e?.cause ? {
+        name: e?.cause?.name,
+        code: e?.cause?.code,
+        errno: e?.cause?.errno,
+        syscall: e?.cause?.syscall,
+        hostname: e?.cause?.hostname,
+        address: e?.cause?.address,
+      } : undefined,
+      stack: e?.stack,
+      url_info: {
+        SUPABASE_URL_value: process.env.SUPABASE_URL || null,
+        SUPABASE_URL_length: (process.env.SUPABASE_URL || '').length,
+        SUPABASE_URL_trimmed: (process.env.SUPABASE_URL || '').trim(),
+      },
+    });
   }
 }
